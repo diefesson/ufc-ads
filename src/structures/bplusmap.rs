@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::{cell::RefCell, ops::Deref, rc::Rc};
 
 // TODO: use generics
 type Key = usize;
@@ -12,7 +12,7 @@ trait Node {
     fn split(&mut self) -> BranchEntry;
 }
 
-type ChildNode = Rc<dyn Node>;
+type ChildNode = Rc<RefCell<dyn Node>>;
 struct BranchEntry {
     key: Key,
     right: ChildNode,
@@ -25,16 +25,16 @@ struct Branch {
 }
 
 impl Branch {
-    fn find_insert_child(&self, key: Key) -> &mut ChildNode {
+    fn find_insert_child(&mut self, key: Key) -> ChildNode {
         if key < self.entries[0].key {
-            return &mut self.left;
+            return Rc::clone(&self.left);
         }
         for i in 1..self.entries.len() {
             if key < self.entries[i].key {
-                return &mut self.entries[i - 1].right;
+                return Rc::clone(&mut self.entries[i - 1].right);
             }
         }
-        return &mut self.entries.last().unwrap().right;
+        return Rc::clone(&self.entries.last().unwrap().right);
     }
 
     fn insert_entry(&mut self, entry: BranchEntry) {
@@ -55,7 +55,7 @@ impl Node for Branch {
 
     fn insert(&mut self, key: Key, value: Value) -> Option<BranchEntry> {
         let child = self.find_insert_child(key);
-        let new = child.insert(key, value);
+        let new = child.borrow_mut().insert(key, value);
         if let Some(entry) = new {
             self.insert_entry(entry);
             if self.over_limit() {
@@ -67,13 +67,13 @@ impl Node for Branch {
 
     fn split(&mut self) -> BranchEntry {
         let right_entries = self.entries.split_off(self.order + 1);
-        let middle = self.entries.pop().unwrap();
+        let mut middle = self.entries.pop().unwrap();
         let right = Branch {
             order: self.order,
             left: middle.right,
             entries: right_entries,
         };
-        middle.right = Rc::new(right);
+        middle.right = Rc::new(RefCell::new(right));
         return middle;
     }
 }
@@ -117,20 +117,48 @@ impl Node for Leaf {
     fn split(&mut self) -> BranchEntry {
         let right_entries = self.entries.split_off(self.order);
         let key = right_entries[0].key;
-        let right: Rc<dyn Node> = Rc::new(Leaf {
+        let right: Rc<RefCell<dyn Node>> = Rc::new(RefCell::new(Leaf {
             order: self.order,
             entries: right_entries,
             next: self.next.take(),
-        });
+        }));
         self.next = Some(Rc::clone(&right));
-        let middle = BranchEntry {
+        return BranchEntry {
             key: key,
             right: right,
         };
-        return middle;
     }
 }
 
 pub struct BPlusMap {
+    order: usize,
     root: Option<ChildNode>,
+}
+
+impl BPlusMap {
+    pub fn new(order: usize) -> Self {
+        Self {
+            order: order,
+            root: None,
+        }
+    }
+
+    pub fn insert(&mut self, key: Key, value: Value) {
+        if let Some(root) = &self.root {
+            let middle = root.borrow_mut().insert(key, value);
+            if let Some(middle) = middle {
+                self.root = Some(Rc::new(RefCell::new(Branch {
+                    order: self.order,
+                    entries: vec![middle],
+                    left: Rc::clone(root),
+                })));
+            }
+        } else {
+            self.root = Some(Rc::new(RefCell::new(Leaf {
+                order: self.order,
+                entries: vec![LeafEntry { key, value }],
+                next: None,
+            })));
+        }
+    }
 }
