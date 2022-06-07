@@ -1,10 +1,10 @@
-use std::{cell::RefCell, ops::Deref, rc::Rc};
+use std::{cell::RefCell, fmt::Debug, rc::Rc};
 
 // TODO: use generics
 type Key = usize;
 type Value = i32;
 
-trait Node {
+trait Node: Debug {
     fn over_limit(&self) -> bool;
 
     fn insert(&mut self, key: Key, value: Value) -> Option<BranchEntry>;
@@ -13,11 +13,14 @@ trait Node {
 }
 
 type ChildNode = Rc<RefCell<dyn Node>>;
+
+#[derive(Debug)]
 struct BranchEntry {
     key: Key,
     right: ChildNode,
 }
 
+#[derive(Debug)]
 struct Branch {
     order: Key,
     left: ChildNode,
@@ -78,11 +81,13 @@ impl Node for Branch {
     }
 }
 
+#[derive(Debug)]
 struct LeafEntry {
     key: Key,
     value: Value,
 }
 
+#[derive(Debug)]
 struct Leaf {
     order: Key,
     next: Option<ChildNode>,
@@ -130,6 +135,7 @@ impl Node for Leaf {
     }
 }
 
+#[derive(Debug)]
 pub struct BPlusMap {
     order: usize,
     root: Option<ChildNode>,
