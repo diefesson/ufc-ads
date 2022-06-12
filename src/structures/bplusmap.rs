@@ -2,7 +2,7 @@ use std::{cell::RefCell, fmt::Debug, rc::Rc};
 
 // TODO: use generics
 type Key = usize;
-type Value = i32;
+type Value = String;
 
 trait Node: Debug {
     fn over_limit(&self) -> bool;

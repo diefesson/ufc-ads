@@ -4,32 +4,12 @@ use std::io::{BufRead, BufReader, Write};
 
 #[derive(Debug)]
 pub struct Book {
-    name: String,
-    original_name: String,
-    author: String,
-    year: i32,
-    country: String,
-    note: String,
-}
-
-impl Book {
-    pub fn new(
-        name: String,
-        original_name: String,
-        author: String,
-        year: i32,
-        country: String,
-        note: String,
-    ) -> Self {
-        Self {
-            name,
-            original_name,
-            author,
-            year,
-            country,
-            note,
-        }
-    }
+    pub title: String,
+    pub original_title: String,
+    pub author: String,
+    pub year: i32,
+    pub country: String,
+    pub note: String,
 }
 
 pub fn read_book(path: &str) -> Result<Book, Box<dyn Error>> {
@@ -37,10 +17,10 @@ pub fn read_book(path: &str) -> Result<Book, Box<dyn Error>> {
     let mut buffer = String::new();
 
     reader.read_line(&mut buffer)?;
-    let name = buffer.trim().to_string();
+    let title = buffer.trim().to_string();
     buffer.clear();
     reader.read_line(&mut buffer)?;
-    let original_name = buffer.trim().to_string();
+    let original_title = buffer.trim().to_string();
     buffer.clear();
     reader.read_line(&mut buffer)?;
     let author = buffer.trim().to_string();
@@ -56,8 +36,8 @@ pub fn read_book(path: &str) -> Result<Book, Box<dyn Error>> {
     buffer.clear();
 
     Ok(Book {
-        name,
-        original_name,
+        title,
+        original_title,
         author,
         year,
         country,
@@ -67,8 +47,8 @@ pub fn read_book(path: &str) -> Result<Book, Box<dyn Error>> {
 
 pub fn write_book(path: &str, book: &Book) -> Result<(), Box<dyn Error>> {
     let mut file = File::create(path)?;
-    writeln!(file, "{}", book.name)?;
-    writeln!(file, "{}", book.original_name)?;
+    writeln!(file, "{}", book.title)?;
+    writeln!(file, "{}", book.original_title)?;
     writeln!(file, "{}", book.author)?;
     writeln!(file, "{}", book.year)?;
     writeln!(file, "{}", book.country)?;
