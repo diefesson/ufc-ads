@@ -16,7 +16,7 @@ pub struct Branch {
 }
 
 impl Branch {
-    fn find_insert_child(&mut self, key: Key) -> ChildNode {
+    fn find_child(&mut self, key: Key) -> ChildNode {
         if key < self.entries[0].key {
             return Rc::clone(&self.left);
         }
@@ -45,7 +45,7 @@ impl Node for Branch {
     }
 
     fn insert(&mut self, key: Key, value: Value) -> Option<BranchEntry> {
-        let child = self.find_insert_child(key);
+        let child = self.find_child(key);
         let new = child.borrow_mut().insert(key, value);
         if let Some(entry) = new {
             self.insert_entry(entry);
@@ -54,6 +54,11 @@ impl Node for Branch {
             }
         }
         return None;
+    }
+
+    fn update(&mut self, key: Key, value: Value) -> bool {
+        let child = self.find_child(key);
+        return child.borrow_mut().update(key, value);
     }
 
     fn split(&mut self) -> BranchEntry {

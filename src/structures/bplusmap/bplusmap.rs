@@ -33,4 +33,12 @@ impl BPlusMap {
             })));
         }
     }
+
+    pub fn update(&mut self, key: Key, value: Value) -> bool {
+        if let Some(root) = &self.root {
+            root.borrow_mut().update(key, value)
+        } else {
+            false
+        }
+    }
 }

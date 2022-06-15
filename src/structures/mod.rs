@@ -1,3 +1,3 @@
 mod bplusmap;
 
-pub use bplusmap::*;
+pub use bplusmap::BPlusMap;

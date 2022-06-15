@@ -40,6 +40,20 @@ impl Node for Leaf {
         return None;
     }
 
+    fn update(&mut self, key: Key, value: Value) -> bool {
+        if let Some(e) = self
+            .entries
+            .iter_mut()
+            .take_while(|e| e.key <= key)
+            .filter(|e| e.key == key)
+            .next()
+        {
+            e.value = value;
+            return true;
+        }
+        return false;
+    }
+
     fn split(&mut self) -> BranchEntry {
         let right_entries = self.entries.split_off(self.order);
         let key = right_entries[0].key;
