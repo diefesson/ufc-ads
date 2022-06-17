@@ -1,3 +1,5 @@
+use crate::demos::DemoResult;
+
 use super::book::Book;
 use super::bookrepository::BookRepository;
 use super::utils::{read_line, read_selection, read_year};
@@ -11,8 +13,8 @@ fn show_options() {
     }
 }
 
-pub fn bookstore_demo() {
-    let mut book_repository = BookRepository::new(ROOT.to_string());
+pub fn bookstore_demo() -> DemoResult {
+    let mut book_repository = BookRepository::new(ROOT.into());
     loop {
         show_options();
         match read_selection() {
@@ -24,12 +26,9 @@ pub fn bookstore_demo() {
                 todo!("Not implemented");
             }
             Ok(2) => {
-                // TODO: impl book listing
-                todo!("Not implemented");
+                list_books(&book_repository)?;
             }
-            Ok(3) => {
-                return;
-            }
+            Ok(3) => return Ok(()),
             _ => {
                 println!("Invalid option:");
             }
@@ -80,4 +79,11 @@ fn add_book(book_repository: &mut BookRepository) {
         note,
     };
     book_repository.add(book);
+}
+
+fn list_books(book_repository: &BookRepository) -> DemoResult {
+    for book in book_repository.iter() {
+        println!("{:?}", book?);
+    }
+    Ok(())
 }

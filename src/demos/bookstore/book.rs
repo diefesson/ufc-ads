@@ -1,6 +1,7 @@
 use std::error::Error;
 use std::fs::File;
 use std::io::{BufRead, BufReader, Write};
+use std::path::Path;
 
 #[derive(Debug)]
 pub struct Book {
@@ -12,7 +13,7 @@ pub struct Book {
     pub note: String,
 }
 
-pub fn read_book(path: &str) -> Result<Book, Box<dyn Error>> {
+pub fn read_book(path: &Path) -> Result<Book, Box<dyn Error>> {
     let mut reader = BufReader::new(File::open(path)?);
     let mut buffer = String::new();
 
@@ -45,7 +46,7 @@ pub fn read_book(path: &str) -> Result<Book, Box<dyn Error>> {
     })
 }
 
-pub fn write_book(path: &str, book: &Book) -> Result<(), Box<dyn Error>> {
+pub fn write_book(path: &Path, book: &Book) -> Result<(), Box<dyn Error>> {
     let mut file = File::create(path)?;
     writeln!(file, "{}", book.title)?;
     writeln!(file, "{}", book.original_title)?;

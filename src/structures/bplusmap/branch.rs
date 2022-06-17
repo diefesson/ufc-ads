@@ -72,4 +72,12 @@ impl Node for Branch {
         middle.right = Rc::new(RefCell::new(right));
         return middle;
     }
+
+    fn len(&self) -> usize {
+        self.entries.len()
+    }
+
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
 }

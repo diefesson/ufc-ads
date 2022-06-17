@@ -68,4 +68,12 @@ impl Node for Leaf {
             right: right,
         };
     }
+
+    fn len(&self) -> usize {
+        self.entries.len()
+    }
+
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
 }
