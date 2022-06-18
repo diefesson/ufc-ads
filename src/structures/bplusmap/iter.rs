@@ -1,6 +1,6 @@
 use super::{
     leaf::Leaf,
-    node::{ChildNode, Value},
+    node::{ChildNode, Key, Value},
 };
 use std::{cell::RefCell, rc::Rc};
 
@@ -33,18 +33,21 @@ impl BPMIter {
 }
 
 impl Iterator for BPMIter {
-    type Item = Value;
+    type Item = (Key, Value);
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.leaf.is_some() {
+            let key;
             let value;
             {
                 let borrow = RefCell::borrow(self.leaf.as_ref().unwrap());
                 let leaf = borrow.as_any().downcast_ref::<Leaf>().unwrap();
-                value = leaf.entries[self.index].value.clone();
+                let entry = &leaf.entries[self.index];
+                key = entry.key;
+                value = entry.value.clone();
             }
             self.advance();
-            Some(value)
+            Some((key, value))
         } else {
             None
         }

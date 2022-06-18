@@ -13,7 +13,7 @@ fn show_options() {
 }
 
 pub fn bookstore_demo() -> DemoResult {
-    let mut book_repository = BookRepository::new(ROOT.into());
+    let mut book_repository = BookRepository::new(ROOT.into())?;
     loop {
         show_options();
         match parse_line() {
