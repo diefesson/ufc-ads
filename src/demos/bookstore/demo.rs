@@ -1,6 +1,6 @@
 use super::book::Book;
 use super::bookrepository::BookRepository;
-use super::utils::{parse_line, read_line, read_selection, read_year};
+use super::console::{parse_line, read_line};
 use crate::demos::DemoResult;
 
 const ROOT: &str = "data";
@@ -16,20 +16,16 @@ pub fn bookstore_demo() -> DemoResult {
     let mut book_repository = BookRepository::new(ROOT.into());
     loop {
         show_options();
-        match read_selection() {
+        match parse_line() {
             Ok(0) => add_book(&mut book_repository)?,
             Ok(1) => find_book(&book_repository)?,
             Ok(2) => {
                 // TODO: impl book note update
                 todo!("Not implemented");
             }
-            Ok(3) => {
-                list_books(&book_repository)?;
-            }
-            Ok(3) => return Ok(()),
-            _ => {
-                println!("Invalid option:");
-            }
+            Ok(3) => list_books(&book_repository)?,
+            Ok(4) => return Ok(()),
+            _ => println!("Invalid option:"),
         }
     }
 }
@@ -54,7 +50,7 @@ fn add_book(book_repository: &mut BookRepository) -> DemoResult {
         return Ok(());
     }
     println!("Year:");
-    let year = read_year();
+    let year = parse_line();
     if year.is_err() {
         println!("Year should not be empty");
         return Ok(());
