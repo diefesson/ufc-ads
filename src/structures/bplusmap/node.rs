@@ -12,6 +12,8 @@ pub trait Node: Debug {
 
     fn insert(&mut self, key: Key, value: Value) -> Option<BranchEntry>;
 
+    fn get(&self, key: Key) -> Option<String>;
+
     fn update(&mut self, key: Key, value: Value) -> bool;
 
     fn split(&mut self) -> BranchEntry;

@@ -40,6 +40,13 @@ impl Node for Leaf {
         return None;
     }
 
+    fn get(&self, key: Key) -> Option<String> {
+        self.entries
+            .iter()
+            .find(|e| e.key == key)
+            .map(|e| e.value.clone())
+    }
+
     fn update(&mut self, key: Key, value: Value) -> bool {
         if let Some(e) = self
             .entries

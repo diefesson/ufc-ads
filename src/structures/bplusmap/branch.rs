@@ -16,13 +16,13 @@ pub struct Branch {
 }
 
 impl Branch {
-    fn find_child(&mut self, key: Key) -> ChildNode {
+    fn find_child(&self, key: Key) -> ChildNode {
         if key < self.entries[0].key {
             return Rc::clone(&self.left);
         }
         for i in 1..self.entries.len() {
             if key < self.entries[i].key {
-                return Rc::clone(&mut self.entries[i - 1].right);
+                return Rc::clone(&self.entries[i - 1].right);
             }
         }
         return Rc::clone(&self.entries.last().unwrap().right);
@@ -54,6 +54,12 @@ impl Node for Branch {
             }
         }
         return None;
+    }
+
+    fn get(&self, key: Key) -> Option<String> {
+        let child = self.find_child(key);
+        let value = child.borrow().get(key);
+        value
     }
 
     fn update(&mut self, key: Key, value: Value) -> bool {

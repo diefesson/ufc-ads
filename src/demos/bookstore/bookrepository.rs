@@ -20,13 +20,25 @@ impl BookRepository {
         }
     }
 
-    pub fn add(&mut self, book: Book) {
+    pub fn add(&mut self, book: Book) -> Result<(), Box<dyn Error>> {
         let filename = book_name(self.current_id, &book);
         let path = book_path(&self.root, &filename);
         self.mapping
             .insert(self.current_id, filename.to_str().unwrap().to_string());
         self.current_id += 1;
-        write_book(&path, &book).unwrap();
+        write_book(&path, &book)?;
+        Ok(())
+    }
+
+    pub fn find(&self, id: usize) -> Result<Option<Book>, Box<dyn Error>> {
+        let filename = self.mapping.get(id);
+        if let Some(filename) = filename {
+            let path = book_path(&self.root, PathBuf::from(filename).as_path());
+            let book = read_book(&path)?;
+            Ok(Some(book))
+        } else {
+            Ok(None)
+        }
     }
 
     pub fn iter(&self) -> impl Iterator<Item = Result<Book, Box<dyn Error>>> + '_ {

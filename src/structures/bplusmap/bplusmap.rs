@@ -1,4 +1,4 @@
-use super::{BPMIter, Branch, ChildNode, Key, Leaf, LeafEntry, Value};
+use super::{node::Node, BPMIter, Branch, ChildNode, Key, Leaf, LeafEntry, Value};
 use std::{cell::RefCell, rc::Rc};
 
 #[derive(Debug)]
@@ -31,6 +31,14 @@ impl BPlusMap {
                 entries: vec![LeafEntry { key, value }],
                 next: None,
             })));
+        }
+    }
+
+    pub fn get(&self, key: Key) -> Option<Value> {
+        if let Some(root) = &self.root {
+            root.borrow().get(key)
+        } else {
+            None
         }
     }
 
