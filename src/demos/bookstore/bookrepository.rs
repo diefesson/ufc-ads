@@ -1,4 +1,4 @@
-use super::book::{read_book, write_book, Book};
+use super::book::Book;
 use crate::structures::BPlusMap;
 use std::{
     error::Error,
@@ -26,7 +26,7 @@ impl BookRepository {
         self.mapping
             .insert(self.current_id, filename.to_str().unwrap().to_string());
         self.current_id += 1;
-        write_book(&path, &book)?;
+        book.write(&path)?;
         Ok(())
     }
 
@@ -34,7 +34,7 @@ impl BookRepository {
         let filename = self.mapping.get(id);
         if let Some(filename) = filename {
             let path = book_path(&self.root, PathBuf::from(filename).as_path());
-            let book = read_book(&path)?;
+            let book = Book::read(&path)?;
             Ok(Some(book))
         } else {
             Ok(None)
@@ -44,7 +44,7 @@ impl BookRepository {
     pub fn iter(&self) -> impl Iterator<Item = Result<Book, Box<dyn Error>>> + '_ {
         self.mapping.iter().map(|filename| {
             let path = book_path(self.root.as_path(), PathBuf::from(filename).as_path());
-            read_book(&path)
+            Book::read(&path)
         })
     }
 }
