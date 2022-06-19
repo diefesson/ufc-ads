@@ -107,7 +107,7 @@ fn update_book_note(book_repository: &BookRepository) -> DemoResult {
     let book = book_repository.find(id)?;
     if let Some(mut book) = book {
         println!("Book: {}", book);
-        println!("new note:");
+        println!("New note:");
         let note = read_line();
         book.note = note;
         book_repository.update(id, book)?;

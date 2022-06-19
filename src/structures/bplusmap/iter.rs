@@ -11,16 +11,13 @@ pub struct BPMIter {
 
 impl BPMIter {
     pub fn new(leaf: Option<ChildNode>) -> Self {
-        Self {
-            leaf: leaf,
-            index: 0,
-        }
+        Self { leaf, index: 0 }
     }
 
     fn next_leaf(&self) -> Option<ChildNode> {
         let borrow = RefCell::borrow(self.leaf.as_ref().unwrap());
         let leaf = borrow.as_any().downcast_ref::<Leaf>().unwrap();
-        leaf.next.as_ref().map(|n| Rc::clone(n))
+        leaf.next.as_ref().map(Rc::clone)
     }
 
     fn advance(&mut self) {

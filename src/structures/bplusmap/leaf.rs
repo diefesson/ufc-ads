@@ -37,7 +37,7 @@ impl Node for Leaf {
         if self.over_limit() {
             return Some(self.split());
         }
-        return None;
+        None
     }
 
     fn get(&self, key: Key) -> Option<String> {
@@ -52,13 +52,12 @@ impl Node for Leaf {
             .entries
             .iter_mut()
             .take_while(|e| e.key <= key)
-            .filter(|e| e.key == key)
-            .next()
+            .find(|e| e.key == key)
         {
             e.value = value;
             return true;
         }
-        return false;
+        false
     }
 
     fn split(&mut self) -> BranchEntry {
@@ -70,10 +69,7 @@ impl Node for Leaf {
             next: self.next.take(),
         }));
         self.next = Some(Rc::clone(&right));
-        return BranchEntry {
-            key: key,
-            right: right,
-        };
+        BranchEntry { key, right }
     }
 
     fn len(&self) -> usize {

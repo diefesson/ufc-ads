@@ -1,4 +1,4 @@
-use super::{node::Node, BPMIter, Branch, ChildNode, Key, Leaf, LeafEntry, Value};
+use super::{BPMIter, Branch, ChildNode, Key, Leaf, LeafEntry, Value};
 use std::{cell::RefCell, rc::Rc};
 
 #[derive(Debug)]
@@ -9,10 +9,7 @@ pub struct BPlusMap {
 
 impl BPlusMap {
     pub fn new(order: usize) -> Self {
-        Self {
-            order: order,
-            root: None,
-        }
+        Self { order, root: None }
     }
 
     pub fn insert(&mut self, key: Key, value: Value) {
@@ -42,6 +39,7 @@ impl BPlusMap {
         }
     }
 
+    #[allow(dead_code)]
     pub fn update(&mut self, key: Key, value: Value) -> bool {
         if let Some(root) = &self.root {
             root.borrow_mut().update(key, value)

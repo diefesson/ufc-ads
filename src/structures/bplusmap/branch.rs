@@ -53,7 +53,7 @@ impl Node for Branch {
                 return Some(self.split());
             }
         }
-        return None;
+        None
     }
 
     fn get(&self, key: Key) -> Option<String> {
@@ -76,7 +76,7 @@ impl Node for Branch {
             entries: right_entries,
         };
         middle.right = Rc::new(RefCell::new(right));
-        return middle;
+        middle
     }
 
     fn len(&self) -> usize {

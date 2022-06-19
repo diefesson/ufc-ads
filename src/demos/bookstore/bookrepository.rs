@@ -17,7 +17,7 @@ impl BookRepository {
     pub fn new(root: PathBuf) -> Result<Self, Box<dyn Error>> {
         let mut new = Self {
             current_id: 0,
-            root: root,
+            root,
             mapping: BPlusMap::new(2),
         };
         new.load_index()?;
@@ -83,10 +83,10 @@ impl BookRepository {
             reader.read_line(&mut buffer)?;
             self.current_id = buffer.trim().parse()?;
             for line in reader.lines() {
-                if let Some((id, filename)) = line?.split_once("|") {
+                if let Some((id, filename)) = line?.split_once('|') {
                     self.mapping.insert(id.parse()?, filename.to_string());
                 } else {
-                    Err("incorrectly formated line in index file")?
+                    return Err("incorrectly formated line in index file".into());
                 }
             }
         }
