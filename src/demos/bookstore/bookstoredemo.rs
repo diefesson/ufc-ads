@@ -1,12 +1,19 @@
 use super::book::Book;
 use super::bookrepository::BookRepository;
 use super::console::{parse_line, read_line};
+use crate::demos::bookstore::book;
 use crate::demos::DemoResult;
 
 const ROOT: &str = "data";
 
 fn show_options() {
-    let options = vec!["Add book", "Find book", "Update book", "List books", "Exit"];
+    let options = vec![
+        "Add book",
+        "Find book",
+        "Update book note",
+        "List books",
+        "Exit",
+    ];
     for (index, name) in options.iter().enumerate() {
         println!("{} - {}", index, name);
     }
@@ -20,8 +27,7 @@ pub fn bookstore_demo() -> DemoResult {
             Ok(0) => add_book(&mut book_repository)?,
             Ok(1) => find_book(&book_repository)?,
             Ok(2) => {
-                // TODO: impl book note update
-                todo!("Not implemented");
+                update_book_note(&book_repository);
             }
             Ok(3) => list_books(&book_repository)?,
             Ok(4) => return Ok(()),
@@ -81,7 +87,7 @@ fn find_book(book_repository: &BookRepository) -> DemoResult {
     let id = parse_line()?;
     let book = book_repository.find(id)?;
     if let Some(book) = book {
-        println!("{:?}", book);
+        println!("Book {:?}", book);
     } else {
         println!("Book not found");
     }
@@ -89,8 +95,25 @@ fn find_book(book_repository: &BookRepository) -> DemoResult {
 }
 
 fn list_books(book_repository: &BookRepository) -> DemoResult {
-    for book in book_repository.iter() {
-        println!("{:?}", book?);
+    for entry in book_repository.iter() {
+        let (id, book) = entry?;
+        println!("Book {}: {:?}", id, book);
+    }
+    Ok(())
+}
+
+fn update_book_note(book_repository: &BookRepository) -> DemoResult {
+    println!("Book id:");
+    let id = parse_line()?;
+    let book = book_repository.find(id)?;
+    if let Some(mut book) = book {
+        println!("Book: {:?}", book);
+        println!("new note:");
+        let note = read_line();
+        book.note = note;
+        book_repository.update(id, book)?;
+    } else {
+        println!("Book not found");
     }
     Ok(())
 }

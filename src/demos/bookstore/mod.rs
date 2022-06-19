@@ -1,6 +1,6 @@
 mod book;
 mod bookrepository;
+mod bookstoredemo;
 mod console;
-mod demo;
 
-pub use demo::bookstore_demo;
+pub use bookstoredemo::bookstore_demo;

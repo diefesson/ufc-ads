@@ -46,10 +46,22 @@ impl BookRepository {
         }
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = Result<Book, Box<dyn Error>>> + '_ {
-        self.mapping.iter().map(|(_, filename)| {
+    pub fn update(&self, id: usize, book: Book) -> Result<bool, Box<dyn Error>> {
+        let filename = self.mapping.get(id);
+        if let Some(filename) = filename {
+            let path = book_path(&self.root, PathBuf::from(filename).as_path());
+            book.write(&path)?;
+            Ok(true)
+        } else {
+            Ok(false)
+        }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = Result<(usize, Book), Box<dyn Error>>> + '_ {
+        self.mapping.iter().map(|(id, filename)| {
             let path = book_path(self.root.as_path(), PathBuf::from(filename).as_path());
-            Book::read(&path)
+            let book = Book::read(&path)?;
+            Ok((id, book))
         })
     }
 
