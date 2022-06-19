@@ -1,4 +1,5 @@
 use std::error::Error;
+use std::fmt::Display;
 use std::fs::File;
 use std::io::{BufRead, BufReader, Write};
 use std::path::Path;
@@ -56,5 +57,15 @@ impl Book {
         writeln!(file, "{}", self.country)?;
         writeln!(file, "{}", self.note)?;
         Ok(())
+    }
+}
+
+impl Display for Book {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{} - {}, {} ({}, {}): {}",
+            self.author, self.title, self.original_title, self.country, self.year, self.note
+        )
     }
 }
