@@ -4,18 +4,7 @@ mod structures;
 use crate::demos::{bookstore_demo, Demo, DemoResult};
 use std::{io::stdin, process::exit};
 
-fn main() {
-    let result = start_demos();
-    if let Err(error) = result {
-        panic!("{}", error);
-    }
-}
-
-fn bye() -> DemoResult {
-    exit(0);
-}
-
-fn start_demos() -> DemoResult {
+fn main() -> DemoResult {
     let demos: Vec<(&str, Demo)> = vec![("Bookstore", bookstore_demo), ("Exit", bye)];
     let mut buffer = String::new();
     for (index, (name, _)) in demos.iter().enumerate() {
@@ -34,4 +23,8 @@ fn start_demos() -> DemoResult {
         }
     }
     Ok(())
+}
+
+fn bye() -> DemoResult {
+    exit(0);
 }
