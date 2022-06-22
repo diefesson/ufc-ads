@@ -1,5 +1,5 @@
 pub fn parent(position: usize) -> usize {
-    position / 2
+    (position - 1) / 2
 }
 
 pub fn left(position: usize) -> usize {
