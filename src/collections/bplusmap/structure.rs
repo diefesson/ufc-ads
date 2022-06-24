@@ -1,7 +1,6 @@
 use super::{BPMIter, Branch, ChildNode, Key, Leaf, LeafEntry, Value};
 use std::{cell::RefCell, rc::Rc};
 
-#[derive(Debug)]
 pub struct BPlusMap {
     order: usize,
     root: Option<ChildNode>,

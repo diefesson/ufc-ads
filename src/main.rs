@@ -1,7 +1,8 @@
+mod collections;
 mod demos;
-mod structures;
 
-use crate::demos::{bookstore_demo, Demo, DemoResult};
+use crate::demos::bookstore::bookstore_demo;
+use crate::demos::{Demo, DemoResult};
 use std::{io::stdin, process::exit};
 
 fn main() -> DemoResult {

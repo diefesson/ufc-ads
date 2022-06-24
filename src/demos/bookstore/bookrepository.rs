@@ -1,5 +1,6 @@
 use super::book::Book;
-use crate::structures::BPlusMap;
+use crate::collections::BPlusMap;
+
 use std::{
     error::Error,
     fs::File,

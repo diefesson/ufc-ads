@@ -1,6 +1,5 @@
-use super::position::{left, parent, right};
+use super::{left, parent, right};
 
-#[derive(Debug)]
 pub struct Heap<T: Ord> {
     data: Vec<T>,
 }

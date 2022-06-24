@@ -1,5 +1,5 @@
-mod bookstore;
+pub mod bookstore;
+pub mod console;
 mod demo;
 
-pub use bookstore::bookstore_demo;
 pub use demo::*;

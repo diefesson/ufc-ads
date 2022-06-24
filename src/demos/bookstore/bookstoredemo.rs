@@ -1,6 +1,5 @@
-use super::book::Book;
-use super::bookrepository::BookRepository;
-use super::console::{parse_line, read_line};
+use crate::demos::bookstore::{Book, BookRepository};
+use crate::demos::console::{parse_line, read_line};
 use crate::demos::DemoResult;
 
 const ROOT: &str = "data";
