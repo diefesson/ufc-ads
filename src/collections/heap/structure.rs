@@ -1,3 +1,5 @@
+use core::slice;
+
 use super::{left, parent, right};
 
 pub struct Heap<T: Ord> {
@@ -18,12 +20,20 @@ impl<T: Ord> Heap<T> {
         self.data.first()
     }
 
-    pub fn next(&mut self) -> T {
-        let value = self.data.swap_remove(0);
-        if !self.is_empty() {
-            self.down(0);
+    pub fn next(&mut self) -> Option<T> {
+        if self.is_empty() {
+            None
+        } else {
+            let value = self.data.swap_remove(0);
+            if !self.is_empty() {
+                self.down(0);
+            }
+            Some(value)
         }
-        value
+    }
+
+    pub fn iter(&self) -> slice::Iter<T> {
+        self.data.iter()
     }
 
     pub fn len(&self) -> usize {
