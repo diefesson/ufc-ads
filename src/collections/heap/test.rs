@@ -10,6 +10,6 @@ fn heap_ordering() {
         heap.insert(i);
     }
     for i in (0..UNTIL).rev() {
-        assert_eq!(i, heap.next(), "unexpected value for ordering");
+        assert_eq!(i, heap.next().unwrap(), "unexpected value for ordering");
     }
 }

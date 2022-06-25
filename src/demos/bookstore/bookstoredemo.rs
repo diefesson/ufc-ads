@@ -1,23 +1,24 @@
 use crate::demos::bookstore::{Book, BookRepository};
 use crate::demos::console;
-use crate::demos::menu::{Menu, MenuOption};
-use crate::demos::DemoResult;
+use crate::demos::menu::{menu_option, title, Menu, MenuResult};
 
 const ROOT: &str = "data";
 
-pub fn bookstore_demo(_: &mut ()) -> DemoResult {
-    let state = BookRepository::new(ROOT.into())?;
-    let options: Vec<MenuOption<_>> = vec![
-        ("Add book", add_book),
-        ("Find book", find_book),
-        ("Update book note", update_book_note),
-        ("List books", list_books),
-    ];
-    let mut menu = Menu::new(state, options);
+pub fn bookstore_demo() -> MenuResult {
+    let mut menu = Menu::new(
+        title("Bookstore Demo"),
+        BookRepository::new(ROOT.into())?,
+        vec![
+            menu_option("Add book", |s| add_book(s)),
+            menu_option("Find book", |s| find_book(s)),
+            menu_option("Update book note", |s| update_book_note(s)),
+            menu_option("List books", |s| list_books(s)),
+        ],
+    );
     menu.show()
 }
 
-fn add_book(book_repository: &mut BookRepository) -> DemoResult {
+fn add_book(book_repository: &mut BookRepository) -> MenuResult {
     println!("Title:");
     let title = console::read_line();
     if title.is_empty() {
@@ -63,7 +64,7 @@ fn add_book(book_repository: &mut BookRepository) -> DemoResult {
     Ok(())
 }
 
-fn find_book(book_repository: &mut BookRepository) -> DemoResult {
+fn find_book(book_repository: &BookRepository) -> MenuResult {
     println!("Book id:");
     let id = console::parse_line()?;
     let book = book_repository.find(id)?;
@@ -75,7 +76,7 @@ fn find_book(book_repository: &mut BookRepository) -> DemoResult {
     Ok(())
 }
 
-fn list_books(book_repository: &mut BookRepository) -> DemoResult {
+fn list_books(book_repository: &BookRepository) -> MenuResult {
     for entry in book_repository.iter() {
         let (id, book) = entry?;
         println!("Book {}: {}", id, book);
@@ -83,7 +84,7 @@ fn list_books(book_repository: &mut BookRepository) -> DemoResult {
     Ok(())
 }
 
-fn update_book_note(book_repository: &mut BookRepository) -> DemoResult {
+fn update_book_note(book_repository: &BookRepository) -> MenuResult {
     println!("Book id:");
     let id = console::parse_line()?;
     let book = book_repository.find(id)?;

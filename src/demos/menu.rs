@@ -1,21 +1,33 @@
-use crate::demos::console;
-use crate::demos::DemoResult;
+use std::error;
+use std::fmt::Display;
 
-pub type MenuFunction<S> = fn(&mut S) -> DemoResult;
+use crate::demos::console;
+
+pub type MenuResult = Result<(), Box<dyn error::Error>>;
+
+pub type MenuFunction<S> = Box<dyn Fn(&mut S) -> MenuResult>;
 
 pub type MenuOption<S> = (&'static str, MenuFunction<S>);
+
+pub type MenuDisplayer<S> = Box<dyn Fn(&S)>;
 pub struct Menu<S> {
+    displayer: MenuDisplayer<S>,
     state: S,
     options: Vec<MenuOption<S>>,
 }
 
 impl<S> Menu<S> {
-    pub fn new(state: S, options: Vec<MenuOption<S>>) -> Self {
-        Self { state, options }
+    pub fn new(displayer: MenuDisplayer<S>, state: S, options: Vec<MenuOption<S>>) -> Self {
+        Self {
+            state,
+            displayer,
+            options,
+        }
     }
 
-    pub fn show(&mut self) -> DemoResult {
+    pub fn show(&mut self) -> MenuResult {
         loop {
+            (self.displayer)(&self.state);
             for (index, (name, _)) in self.options.iter().enumerate() {
                 println!("{}. {}", index, name);
             }
@@ -28,4 +40,21 @@ impl<S> Menu<S> {
             };
         }
     }
+}
+
+pub fn title<S>(title: &'static str) -> MenuDisplayer<S> {
+    Box::new(move |_| {
+        println!("===== {} =====", title);
+    })
+}
+
+pub fn display_state<S: Display>() -> MenuDisplayer<S> {
+    Box::new(|state| println!("{}", state))
+}
+
+pub fn menu_option<S>(
+    name: &'static str,
+    handler: impl Fn(&mut S) -> MenuResult + 'static,
+) -> MenuOption<S> {
+    (name, Box::new(handler))
 }

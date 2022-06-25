@@ -2,15 +2,20 @@ mod collections;
 mod demos;
 
 use demos::counters::counters_demo;
+use demos::menu::{menu_option, title};
 
 use crate::demos::bookstore::bookstore_demo;
-use crate::demos::menu::{Menu, MenuOption};
-use crate::demos::DemoResult;
+use crate::demos::menu::{Menu, MenuResult};
 
-fn main() -> DemoResult {
+fn main() -> MenuResult {
     let state = ();
-    let options: Vec<MenuOption<_>> =
-        vec![("Bookstore", bookstore_demo), ("Counters", counters_demo)];
-    let mut demo_player = Menu::new(state, options);
+    let mut demo_player = Menu::new(
+        title("Select a Demo"),
+        state,
+        vec![
+            menu_option("Bookstore", |_| bookstore_demo()),
+            menu_option("Counters demo", |_| counters_demo()),
+        ],
+    );
     demo_player.show()
 }
