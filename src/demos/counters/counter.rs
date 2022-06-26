@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use super::Client;
 
 pub struct Counter {
@@ -18,5 +20,15 @@ impl Counter {
     pub fn serve(&mut self, client: Client) {
         assert!(!self.in_use(), "counter already in use");
         self.current_client = Some(client)
+    }
+}
+
+impl Display for Counter {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if let Some(client) = &self.current_client {
+            write!(f, "{}", client)
+        } else {
+            write!(f, "Free")
+        }
     }
 }
