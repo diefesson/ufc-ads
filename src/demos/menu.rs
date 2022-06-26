@@ -28,6 +28,7 @@ impl<S> Menu<S> {
     pub fn show(&mut self) -> MenuResult {
         loop {
             (self.displayer)(&self.state);
+            println!("");
             for (index, (name, _)) in self.options.iter().enumerate() {
                 println!("{}. {}", index, name);
             }
@@ -49,7 +50,7 @@ pub fn title<S>(title: &'static str) -> MenuDisplayer<S> {
 }
 
 pub fn display_state<S: Display>() -> MenuDisplayer<S> {
-    Box::new(|state| println!("{}", state))
+    Box::new(|state| print!("{}", state))
 }
 
 pub fn menu_option<S>(

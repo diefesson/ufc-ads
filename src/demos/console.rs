@@ -1,7 +1,4 @@
-use std::{
-    io::{stdin, Read},
-    str::FromStr,
-};
+use std::{io::stdin, str::FromStr};
 
 pub fn read_line() -> String {
     let mut buffer = String::new();
@@ -19,6 +16,6 @@ where
 }
 
 pub fn pause() {
-    let mut buffer = [0; 1];
-    stdin().read(&mut buffer).unwrap();
+    let mut buffer = String::new();
+    stdin().read_line(&mut buffer).unwrap();
 }

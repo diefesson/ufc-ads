@@ -14,7 +14,7 @@ fn main() -> MenuResult {
         state,
         vec![
             menu_option("Bookstore", |_| bookstore_demo()),
-            menu_option("Counters demo", |_| counters_demo()),
+            menu_option("Counters", |_| counters_demo()),
         ],
     );
     demo_player.show()

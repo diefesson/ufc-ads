@@ -21,6 +21,11 @@ impl Counter {
         assert!(!self.in_use(), "counter already in use");
         self.current_client = Some(client)
     }
+
+    pub fn finalize_service(&mut self) {
+        assert!(self.in_use(), "counter is not in use");
+        self.current_client = None;
+    }
 }
 
 impl Display for Counter {
