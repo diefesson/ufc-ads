@@ -82,26 +82,28 @@ fn call_next(demo_state: &mut DemoState) -> MenuResult {
             }
         }
         Some(_) => {
-            let counter = demo_state.counters[1..]
+            let has_priority = demo_state
+                .queue
+                .iter()
+                .find(|c| c.priority == PriorityType::PRIORITY)
+                .is_some();
+            let counter = demo_state
+                .counters
                 .iter_mut()
                 .enumerate()
+                .skip(has_priority as usize)
                 .find(|(_, c)| !c.in_use());
             if let Some((index, counter)) = counter {
                 counter.serve(demo_state.queue.next().unwrap());
                 println!("Non priority client directed to counter {}", index);
-            } else if !demo_state.counters[0].in_use() {
-                if demo_state
-                    .queue
-                    .iter()
-                    .any(|c| c.priority == PriorityType::PRIORITY)
-                {
-                    demo_state.counters[0].serve(demo_state.queue.next().unwrap());
-                    println!("Non priority client directed to counter 0");
-                } else {
-                    println!("The only free counter is for priority clients, but the queue has priority clients");
-                }
             } else {
-                println!("No counter to serve the non priority client");
+                if has_priority && !demo_state.counters[0].in_use() {
+                    println!(
+                        "The only free counter is already reserved for priority clients in queue"
+                    );
+                } else {
+                    println!("No counter to serve the non priority client");
+                }
             }
         }
         _ => println!("The queue is empty"),
