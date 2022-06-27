@@ -13,6 +13,17 @@ struct DemoState {
     next_check_in: u32,
 }
 
+impl DemoState {
+    fn new(counters_count: usize) -> Self {
+        let counters = (0..counters_count).map(|_| Counter::new()).collect();
+        Self {
+            counters,
+            queue: Heap::new(),
+            next_check_in: 0,
+        }
+    }
+}
+
 impl Display for DemoState {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let next_client = self.queue.peek();
@@ -21,7 +32,7 @@ impl Display for DemoState {
             .iter()
             .any(|c| c.priority == PriorityType::PRIORITY);
         let queue_size = self.queue.len();
-        writeln!(f, "===== Bookstore Demo =====")?;
+        writeln!(f, "===== Counters Demo (heap) =====")?;
         writeln!(f)?;
         writeln!(f, "Queue:")?;
         if let Some(client) = next_client {
@@ -39,27 +50,16 @@ impl Display for DemoState {
     }
 }
 
-impl DemoState {
-    fn new() -> Self {
-        let counters = (0..MIN_COUNTERS).map(|_| Counter::new()).collect();
-        Self {
-            counters,
-            queue: Heap::new(),
-            next_check_in: 0,
-        }
-    }
-}
-
 pub fn counters_demo() -> MenuResult {
     let mut counters_menu = Menu::new(
         display_state(),
-        DemoState::new(),
+        DemoState::new(MIN_COUNTERS),
         vec![
-            menu_option("Add client", |s| add_client(s)),
-            menu_option("Finalize service", |s| finalize_service(s)),
+            menu_option("Emit ticket", |s| emit_ticket(s)),
             menu_option("Call next", |s| call_next(s)),
-            menu_option("Add counter", |s| add_counter(s)),
-            menu_option("Remove counter", |s| remove_counter(s)),
+            menu_option("Finalize service", |s| finalize_service(s)),
+            menu_option("Open counter", |s| open_counter(s)),
+            menu_option("Close counter", |s| close_counter(s)),
         ],
     );
     counters_menu.show()
@@ -110,14 +110,14 @@ fn call_next(demo_state: &mut DemoState) -> MenuResult {
     Ok(())
 }
 
-fn add_counter(demo_state: &mut DemoState) -> MenuResult {
+fn open_counter(demo_state: &mut DemoState) -> MenuResult {
     demo_state.counters.push(Counter::new());
     println!("Added counter");
     console::pause();
     Ok(())
 }
 
-fn remove_counter(demo_state: &mut DemoState) -> MenuResult {
+fn close_counter(demo_state: &mut DemoState) -> MenuResult {
     if demo_state.counters.len() > MIN_COUNTERS {
         demo_state.counters.pop();
         println!("Removed counter")
@@ -128,7 +128,7 @@ fn remove_counter(demo_state: &mut DemoState) -> MenuResult {
     Ok(())
 }
 
-fn add_client(demo_state: &mut DemoState) -> MenuResult {
+fn emit_ticket(demo_state: &mut DemoState) -> MenuResult {
     println!("Priority (normal/priority):");
     let priority = console::parse_line();
     if priority.is_err() {

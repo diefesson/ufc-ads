@@ -6,7 +6,7 @@ const ROOT: &str = "data";
 
 pub fn bookstore_demo() -> MenuResult {
     let mut menu = Menu::new(
-        title("Bookstore Demo"),
+        title("Bookstore Demo (B+ Map)"),
         BookRepository::new(ROOT.into())?,
         vec![
             menu_option("Add book", |s| add_book(s)),
