@@ -121,8 +121,18 @@ fn open_counter(demo_state: &mut DemoState) -> MenuResult {
 
 fn close_counter(demo_state: &mut DemoState) -> MenuResult {
     if demo_state.counters.len() > MIN_COUNTERS {
-        demo_state.counters.pop();
-        println!("Removed counter")
+        let index = demo_state
+            .counters
+            .iter()
+            .enumerate()
+            .find(|(_, c)| !c.in_use())
+            .map(|(i, _)| i);
+        if let Some(index) = index {
+            demo_state.counters.remove(index);
+            println!("Removed counter {}", index);
+        } else {
+            println!("All counters are in use");
+        }
     } else {
         println!("The min number of counters is {}", MIN_COUNTERS);
     }
