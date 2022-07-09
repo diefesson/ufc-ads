@@ -5,7 +5,7 @@ pub struct UnionFind {
 impl UnionFind {
     pub fn new(size: usize) -> Self {
         Self {
-            data: Vec::with_capacity(size),
+            data: vec![-1; size],
         }
     }
 
