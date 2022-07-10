@@ -1,6 +1,6 @@
 use super::{Group, InterestArea, Student};
 use crate::demos::console;
-use crate::demos::menu::{display_state, menu_option, Menu, MenuResult};
+use crate::demos::menu::{display_state, simple_option, Menu, MenuResult};
 use std::fmt::Display;
 
 const MAX_STUDENTS: usize = 50;
@@ -50,45 +50,46 @@ pub fn study_groups_demo() -> MenuResult {
         display_state(),
         DemoState::new(),
         vec![
-            menu_option("Deselect student", |state| deselect_student(state)),
-            menu_option("Select student", |state| select_student(state)),
-            menu_option("Add student", |state| add_student(state)),
-            menu_option("Add group", |state| add_group(state)),
-            menu_option("Add to group", |state| add_to_group(state)),
-            menu_option("Join grop", |state| join_group(state)),
-            menu_option("Show students", |state| show_students(state)),
-            menu_option("Show groups", |state| show_groups(state)),
+            simple_option("Deselect student", |state| deselect_student(state)),
+            simple_option("Select student", |state| select_student(state)),
+            simple_option("Add student", |state| add_student(state)),
+            simple_option("Add group", |state| add_group(state)),
+            simple_option("Add to group", |state| add_to_group(state)),
+            simple_option("Join grop", |state| join_group(state)),
+            simple_option("Show students", |state| show_students(state)),
+            simple_option("Show groups", |state| show_groups(state)),
+            simple_option("Show students in group", |state| {
+                show_students_in_group(state)
+            }),
         ],
     );
     menu.show()
 }
 
-pub fn deselect_student(demo_state: &mut DemoState) -> MenuResult {
+pub fn deselect_student(demo_state: &mut DemoState) {
     demo_state.current_student_id = None;
-    Ok(())
 }
 
-pub fn select_student(demo_state: &mut DemoState) -> MenuResult {
+pub fn select_student(demo_state: &mut DemoState) {
     println!("Student id:");
     let student_id = console::parse_line();
     if student_id.is_err() || *student_id.as_ref().unwrap() >= demo_state.students.len() {
         println!("Invalid student id");
-        return Ok(());
+        return;
     }
     demo_state.current_student_id = Some(student_id.unwrap());
-    Ok(())
 }
 
-pub fn add_student(demo_state: &mut DemoState) -> MenuResult {
+pub fn add_student(demo_state: &mut DemoState) {
     if demo_state.students.len() >= MAX_STUDENTS {
         println!("Max count of students is {}", MAX_STUDENTS);
-        return Ok(());
+        return;
     }
     println!("Name:");
     let name = console::read_line();
     if name.len() == 0 {
         println!("Name should not be empty");
-        return Ok(());
+        return;
     }
     println!("Areas (separated by space):");
     show_interest_areas();
@@ -113,36 +114,35 @@ pub fn add_student(demo_state: &mut DemoState) -> MenuResult {
     });
     demo_state.current_student_id = Some(id);
     println!("Student added");
-    Ok(())
 }
 
-pub fn add_group(demo_state: &mut DemoState) -> MenuResult {
+pub fn add_group(demo_state: &mut DemoState) {
     if demo_state.current_student_id.is_none() {
         println!("Select a student");
-        return Ok(());
+        return;
     }
     let current_student = demo_state.current_student().unwrap();
     println!("Name:");
     let name = console::read_line();
     if name.len() == 0 {
         println!("Name should not be empty");
-        return Ok(());
+        return;
     }
     if demo_state.groups.iter().any(|group| group.name() == name) {
         println!("The name should be unique");
-        return Ok(());
+        return;
     }
     println!("Interest area:");
     show_interest_areas();
     let interest_area = console::parse_line();
     if interest_area.is_err() {
         println!("Invalid interest area");
-        return Ok(());
+        return;
     }
     let interest_area = interest_area.unwrap();
     if !current_student.interest_areas.contains(&interest_area) {
         println!("Only student interest areas are allowed");
-        return Ok(());
+        return;
     }
     demo_state.groups.push(Group::new(
         demo_state.current_student_id.unwrap(),
@@ -151,13 +151,12 @@ pub fn add_group(demo_state: &mut DemoState) -> MenuResult {
         MAX_STUDENTS,
     ));
     println!("Group added");
-    Ok(())
 }
 
-pub fn add_to_group(demo_state: &mut DemoState) -> MenuResult {
+pub fn add_to_group(demo_state: &mut DemoState) {
     if demo_state.current_student().is_none() {
         println!("Select a student");
-        return Ok(());
+        return;
     }
     let current_student_id = demo_state.current_student_id.unwrap();
     println!("Group name:");
@@ -168,19 +167,19 @@ pub fn add_to_group(demo_state: &mut DemoState) -> MenuResult {
         .position(|group| group.name() == name);
     if group_index.is_none() {
         println!("Group not found");
-        return Ok(());
+        return;
     }
     let group_index = group_index.unwrap();
     let group = &demo_state.groups[group_index];
     if group.representative_id() != current_student_id {
         println!("Only group representative can add students");
-        return Ok(());
+        return;
     }
     println!("Student id:");
     let student_id = console::parse_line::<usize>();
     if student_id.is_err() {
         println!("Invalid student id");
-        return Ok(());
+        return;
     }
     let student_id = student_id.unwrap();
     let student_interests = &demo_state.students[student_id].interest_areas;
@@ -188,13 +187,12 @@ pub fn add_to_group(demo_state: &mut DemoState) -> MenuResult {
         demo_state.groups[group_index].add(student_id);
     }
     println!("Student added to group");
-    Ok(())
 }
 
-pub fn join_group(demo_state: &mut DemoState) -> MenuResult {
+pub fn join_group(demo_state: &mut DemoState) {
     if demo_state.current_student().is_none() {
         println!("Select a student");
-        return Ok(());
+        return;
     }
     println!("Group name:");
     let name = console::read_line();
@@ -204,27 +202,25 @@ pub fn join_group(demo_state: &mut DemoState) -> MenuResult {
         .position(|group| group.name() == name);
     if group_index.is_none() {
         println!("Group not found");
-        return Ok(());
+        return;
     }
     let group_index = group_index.unwrap();
     let current_interest_areas = &demo_state.current_student().unwrap().interest_areas;
     if !current_interest_areas.contains(demo_state.groups[group_index].interest_area()) {
         println!("Incompatible interest areas");
-        return Ok(());
+        return;
     }
     println!("Joined group");
     demo_state.groups[group_index].add(demo_state.current_student_id.unwrap());
-    Ok(())
 }
 
-pub fn show_students(demo_state: &DemoState) -> MenuResult {
+pub fn show_students(demo_state: &DemoState) {
     for student in demo_state.students.iter() {
         println!("{}", student)
     }
-    Ok(())
 }
 
-pub fn show_groups(demo_state: &DemoState) -> MenuResult {
+pub fn show_groups(demo_state: &DemoState) {
     for group in demo_state.groups.iter() {
         println!(
             "{} ({}) [{}]: {}",
@@ -236,10 +232,25 @@ pub fn show_groups(demo_state: &DemoState) -> MenuResult {
         let representative = &demo_state.students[group.representative_id()];
         println!("Represented by: {}", representative);
     }
-    Ok(())
 }
 
-pub fn show_students_in_group(demo_state: &DemoState) {}
+pub fn show_students_in_group(demo_state: &DemoState) {
+    println!("Group name:");
+    let name = console::read_line();
+    let group = demo_state.groups.iter().find(|group| group.name() == name);
+    if group.is_none() {
+        println!("Group not found");
+        return;
+    }
+    let group = group.unwrap();
+    let students_in_group = demo_state
+        .students
+        .iter()
+        .filter(|student| group.contains(student.id));
+    for student in students_in_group {
+        println!("{}", student);
+    }
+}
 
 pub fn show_interest_areas() {
     for (index, interest_area) in InterestArea::VALUES.iter().enumerate() {

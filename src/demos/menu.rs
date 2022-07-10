@@ -59,3 +59,13 @@ pub fn menu_option<S>(
 ) -> MenuOption<S> {
     (name, Box::new(handler))
 }
+
+pub fn simple_option<S>(name: &'static str, handler: impl Fn(&mut S) + 'static) -> MenuOption<S> {
+    (
+        name,
+        Box::new(move |state| {
+            handler(state);
+            Ok(())
+        }),
+    )
+}
