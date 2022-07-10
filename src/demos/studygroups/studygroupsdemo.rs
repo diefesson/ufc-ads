@@ -223,14 +223,12 @@ pub fn show_students(demo_state: &DemoState) {
 pub fn show_groups(demo_state: &DemoState) {
     for group in demo_state.groups.iter() {
         println!(
-            "{} ({}) [{}]: {}",
+            "Name: {}, Representative: {}, Size: {}, Interest area: {}",
             group.name(),
             demo_state.students[group.representative_id()].name,
             group.len(),
             group.interest_area(),
         );
-        let representative = &demo_state.students[group.representative_id()];
-        println!("Represented by: {}", representative);
     }
 }
 
