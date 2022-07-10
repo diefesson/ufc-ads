@@ -28,7 +28,7 @@ impl<S> Menu<S> {
     pub fn show(&mut self) -> MenuResult {
         loop {
             (self.displayer)(&self.state);
-            println!("");
+            println!();
             for (index, (name, _)) in self.options.iter().enumerate() {
                 println!("{}. {}", index, name);
             }

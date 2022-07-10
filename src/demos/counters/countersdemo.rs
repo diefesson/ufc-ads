@@ -30,7 +30,7 @@ impl Display for DemoState {
         let has_priority_clients = self
             .queue
             .iter()
-            .any(|c| c.priority == PriorityType::PRIORITY);
+            .any(|c| c.priority == PriorityType::Priority);
         let queue_size = self.queue.len();
         writeln!(f, "===== Counters Demo (heap) =====")?;
         writeln!(f)?;
@@ -68,7 +68,7 @@ pub fn counters_demo() -> MenuResult {
 fn call_next(demo_state: &mut DemoState) -> MenuResult {
     let client = demo_state.queue.peek();
     match client {
-        Some(client) if client.priority == PriorityType::PRIORITY => {
+        Some(client) if client.priority == PriorityType::Priority => {
             let counter = demo_state
                 .counters
                 .iter_mut()
@@ -85,8 +85,7 @@ fn call_next(demo_state: &mut DemoState) -> MenuResult {
             let has_priority = demo_state
                 .queue
                 .iter()
-                .find(|c| c.priority == PriorityType::PRIORITY)
-                .is_some();
+                .any(|c| c.priority == PriorityType::Priority);
             let counter = demo_state
                 .counters
                 .iter_mut()
@@ -96,14 +95,10 @@ fn call_next(demo_state: &mut DemoState) -> MenuResult {
             if let Some((index, counter)) = counter {
                 counter.serve(demo_state.queue.next().unwrap());
                 println!("Non priority client directed to counter {}", index);
+            } else if has_priority && !demo_state.counters[0].in_use() {
+                println!("The only free counter is already reserved for priority clients in queue");
             } else {
-                if has_priority && !demo_state.counters[0].in_use() {
-                    println!(
-                        "The only free counter is already reserved for priority clients in queue"
-                    );
-                } else {
-                    println!("No counter to serve the non priority client");
-                }
+                println!("No counter to serve the non priority client");
             }
         }
         _ => println!("The queue is empty"),

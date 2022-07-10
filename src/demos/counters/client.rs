@@ -2,8 +2,8 @@ use std::{error, fmt::Display, str::FromStr};
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Debug)]
 pub enum PriorityType {
-    NORMAL,
-    PRIORITY,
+    Normal,
+    Priority,
 }
 
 impl FromStr for PriorityType {
@@ -11,8 +11,8 @@ impl FromStr for PriorityType {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let s = s.to_lowercase();
         match s.as_str() {
-            "normal" => Ok(Self::NORMAL),
-            "priority" => Ok(Self::PRIORITY),
+            "normal" => Ok(Self::Normal),
+            "priority" => Ok(Self::Priority),
             _ => Err("invalid string".into()),
         }
     }
@@ -20,8 +20,8 @@ impl FromStr for PriorityType {
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Debug)]
 pub enum ServiceType {
-    PARTICULAR,
-    BUSINESS,
+    Particular,
+    Business,
 }
 
 impl FromStr for ServiceType {
@@ -30,8 +30,8 @@ impl FromStr for ServiceType {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let s = s.to_lowercase();
         match s.as_str() {
-            "particular" => Ok(Self::PARTICULAR),
-            "business" => Ok(Self::BUSINESS),
+            "particular" => Ok(Self::Particular),
+            "business" => Ok(Self::Business),
             _ => Err("invalid string".into()),
         }
     }
@@ -52,7 +52,7 @@ impl Ord for Client {
 
 impl PartialOrd for Client {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        Some(self.cmp(&other))
+        Some(self.cmp(other))
     }
 }
 

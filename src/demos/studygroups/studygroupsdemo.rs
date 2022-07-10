@@ -50,17 +50,15 @@ pub fn study_groups_demo() -> MenuResult {
         display_state(),
         DemoState::new(),
         vec![
-            simple_option("Deselect student", |state| deselect_student(state)),
-            simple_option("Select student", |state| select_student(state)),
-            simple_option("Add student", |state| add_student(state)),
-            simple_option("Add group", |state| add_group(state)),
-            simple_option("Add to group", |state| add_to_group(state)),
-            simple_option("Join grop", |state| join_group(state)),
-            simple_option("Show students", |state| show_students(state)),
-            simple_option("Show groups", |state| show_groups(state)),
-            simple_option("Show students in group", |state| {
-                show_students_in_group(state)
-            }),
+            simple_option("Deselect student", deselect_student),
+            simple_option("Select student", select_student),
+            simple_option("Add student", add_student),
+            simple_option("Add group", add_group),
+            simple_option("Add to group", add_to_group),
+            simple_option("Join grop", join_group),
+            simple_option("Show students", show_students),
+            simple_option("Show groups", show_groups),
+            simple_option("Show students in group", show_students_in_group),
         ],
     );
     menu.show()
@@ -87,7 +85,7 @@ pub fn add_student(demo_state: &mut DemoState) {
     }
     println!("Name:");
     let name = console::read_line();
-    if name.len() == 0 {
+    if name.is_empty() {
         println!("Name should not be empty");
         return;
     }
@@ -99,9 +97,10 @@ pub fn add_student(demo_state: &mut DemoState) {
             .parse::<usize>()
             .map(|i| InterestArea::VALUES.get(i));
         if let Ok(Some(interest_area)) = interest_area {
-            interest_areas.push(*interest_area)
+            interest_areas.push(*interest_area);
         } else {
-            println!("Invalid interest area")
+            println!("Invalid interest area");
+            return;
         }
     }
     interest_areas.sort();
@@ -124,7 +123,7 @@ pub fn add_group(demo_state: &mut DemoState) {
     let current_student = demo_state.current_student().unwrap();
     println!("Name:");
     let name = console::read_line();
-    if name.len() == 0 {
+    if name.is_empty() {
         println!("Name should not be empty");
         return;
     }
@@ -214,13 +213,13 @@ pub fn join_group(demo_state: &mut DemoState) {
     demo_state.groups[group_index].add(demo_state.current_student_id.unwrap());
 }
 
-pub fn show_students(demo_state: &DemoState) {
+pub fn show_students(demo_state: &mut DemoState) {
     for student in demo_state.students.iter() {
         println!("{}", student)
     }
 }
 
-pub fn show_groups(demo_state: &DemoState) {
+pub fn show_groups(demo_state: &mut DemoState) {
     for group in demo_state.groups.iter() {
         println!(
             "Name: {}, Representative: {}, Size: {}, Interest area: {}",
@@ -232,7 +231,7 @@ pub fn show_groups(demo_state: &DemoState) {
     }
 }
 
-pub fn show_students_in_group(demo_state: &DemoState) {
+pub fn show_students_in_group(demo_state: &mut DemoState) {
     println!("Group name:");
     let name = console::read_line();
     let group = demo_state.groups.iter().find(|group| group.name() == name);
