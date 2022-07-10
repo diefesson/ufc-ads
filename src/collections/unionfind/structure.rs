@@ -32,7 +32,7 @@ impl UnionFind {
         if a_representative == b_representative {
             return;
         }
-        if a_size <= b_size {
+        if a_size < b_size {
             self.data[a_representative] = b_representative as isize;
             self.data[b_representative] -= a_size as isize;
         } else {
