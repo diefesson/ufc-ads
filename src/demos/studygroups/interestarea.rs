@@ -4,7 +4,7 @@ use std::{
     str::FromStr,
 };
 
-#[derive(Clone, Copy, Hash, PartialEq, Eq)]
+#[derive(Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub enum InterestArea {
     EDA,
     FUP,

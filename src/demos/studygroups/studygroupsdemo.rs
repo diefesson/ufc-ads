@@ -99,13 +99,13 @@ pub fn add_student(demo_state: &mut DemoState) {
             .parse::<usize>()
             .map(|i| InterestArea::VALUES.get(i));
         if let Ok(Some(interest_area)) = interest_area {
-            if !interest_areas.contains(interest_area) {
-                interest_areas.push(*interest_area)
-            }
+            interest_areas.push(*interest_area)
         } else {
             println!("Invalid interest area")
         }
     }
+    interest_areas.sort();
+    interest_areas.dedup();
     let id = demo_state.students.len();
     demo_state.students.push(Student {
         id,
